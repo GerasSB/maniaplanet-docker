@@ -94,7 +94,7 @@ services:
         - db
         - dedicated
     environment:
-        GAME_SETTINGS: "matchsettings.txt"
+        GAME_SETTINGS: "default.txt"
         PYPLANET_DEBUG: "False"
     volumes:
       - "pyplanetData:/app/server"
