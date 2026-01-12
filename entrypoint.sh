@@ -38,24 +38,37 @@ if [ ! -f ${PROJECT_ROOT}/UserData/Maps/stadium_map.Map.gbx ]; then
     cp ${TEMPLATE_DIR}/stadium_map.Map.gbx ${PROJECT_ROOT}/UserData/Maps/stadium_map.Map.gbx
 fi
 
-# Download title.
-# TODO: Check if update is required first.
-echo "=> Downloading newest title version"
+# Download titlepack
+# Check for titlepack variable
 if [ "$TITLE_PACK_FILE" = "" ]
 then
-    wget ${TITLE_PACK_URL} -qP ${PROJECT_ROOT}/UserData/Packs/
+    TITLE_FILE=$(basename "${TITLE_PACK_URL}")
+    TITLE_PATH="${PROJECT_ROOT}/UserData/Packs/${TITLE_FILE}"
 else
-    wget ${TITLE_PACK_URL} -qO ${PROJECT_ROOT}/UserData/Packs/${TITLE_PACK_FILE}
+    TITLE_PATH="${PROJECT_ROOT}/UserData/Packs/${TITLE_PACK_FILE}"
+fi
+
+if [ ! -f "${TITLE_PATH}" ]; then
+    echo "=> Downloading newest title version"
+    if [ "$TITLE_PACK_FILE" = "" ]
+    then
+        wget ${TITLE_PACK_URL} -qP ${PROJECT_ROOT}/UserData/Packs/
+    else
+        wget ${TITLE_PACK_URL} -qO ${TITLE_PATH}
+    fi
+else
+    echo "=> Title pack already exists, skipping download"
 fi
 
 # Start dedicated.
 echo "=> Starting server, login=${LOGIN}"
-./ManiaPlanetServer $@ \
+./ManiaPlanetServer "$@" \
     /nodaemon \
-    /forceip=${FORCE_IP_ADDRESS}:${FORCE_IP_PORT} \
-    /title=${TITLE} \
-    /dedicated_cfg=${DEDICATED_CFG} \
-    /game_settings=${MATCH_SETTINGS} \
-    /login=${LOGIN} \
-    /password=${PASSWORD} \
-    /servername=${SERVER_NAME} \
+    /forceip="${FORCE_IP_ADDRESS}:${FORCE_IP_PORT}" \
+    /title="${TITLE}" \
+    /dedicated_cfg="${DEDICATED_CFG}" \
+    /game_settings="${MATCH_SETTINGS}" \
+    /login="${LOGIN}" \
+    /password="${PASSWORD}" \
+    /servername="${SERVER_NAME}" \
+    /serverpassword="${SERVER_PASSWORD}"
